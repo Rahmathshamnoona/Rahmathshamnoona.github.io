@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rahmath Shamnoona | Integration & Data Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #000000;
+      --bg2: #080808;
+      --bg3: #101010;
+      --line: rgba(255,255,255,0.07);
+      --line2: rgba(255,255,255,0.13);
+      --accent: #D4AF37;
+      --accent2: #C0A060;
+      --accent3: #A08040;
+      --text: #F5F5F5;
+      --muted: #5A5A5A;
+      --card: rgba(255,255,255,0.025);
+      --card-hover: rgba(255,255,255,0.05);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* GRID OVERLAY */
+    body::before { display: none; }
+
+    /* GLOW BLOBS */
+    .blob { display: none; }
+
+    /* NAVBAR */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(0, 0, 0, 0.85);
+      border-bottom: 1px solid var(--line);
+    }
+    nav .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+    }
+    nav ul a {
+      font-size: 0.85rem;
+      font-weight: 400;
+      color: var(--muted);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: color 0.2s;
+    }
+    nav ul a:hover { color: var(--text); }
+
+    /* SECTIONS */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* HERO */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 8rem 3rem 6rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .hero-tag::before {
+      content: '';
+      display: inline-block;
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(3rem, 8vw, 7rem);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      font-style: normal;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+      -webkit-text-stroke: 0;
+    }
+    .hero-desc {
+      max-width: 560px;
+      margin-top: 2rem;
+      font-size: 1.05rem;
+      font-weight: 300;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      background: var(--accent);
+      color: #000000;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.75rem;
+      border: 1px solid var(--line2);
+      color: var(--text);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 400;
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 5rem;
+      padding-top: 3rem;
+      border-top: 1px solid var(--line);
+      flex-wrap: wrap;
+    }
+    .stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      color: var(--text);
+    }
+    .stat-num span { color: var(--accent); }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 0.25rem;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+
+    /* SECTION WRAPPER */
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 6rem 3rem;
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+
+    /* ABOUT */
+    #about .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+    .about-text p {
+      color: var(--muted);
+      font-weight: 300;
+      font-size: 1rem;
+      line-height: 1.9;
+      margin-bottom: 1.25rem;
+    }
+    .about-text p strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .about-links {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .contact-item:hover { background: var(--card-hover); border-color: var(--line2); }
+    .contact-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 4px;
+      background: rgba(212,175,55,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon svg { width: 16px; height: 16px; stroke: var(--accent); }
+    .contact-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+    }
+    .contact-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 400;
+    }
+
+    /* SKILLS */
+    #skills { background: var(--bg2); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .skill-group {
+      padding: 1.75rem;
+      background: var(--bg2);
+      transition: background 0.2s;
+    }
+    .skill-group:hover { background: var(--card-hover); }
+    .skill-group-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .skill-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    .skill-tag {
+      padding: 0.3rem 0.75rem;
+      border: 1px solid var(--line2);
+      border-radius: 3px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .skill-group:hover .skill-tag { color: var(--text); border-color: var(--line2); }
+
+    /* EXPERIENCE */
+    .exp-timeline {
+      position: relative;
+    }
+    .exp-timeline::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+    .exp-item {
+      padding-left: 2.5rem;
+      padding-bottom: 4rem;
+      position: relative;
+    }
+    .exp-item:last-child { padding-bottom: 0; }
+    .exp-dot {
+      position: absolute;
+      left: -5px;
+      top: 6px;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid var(--bg);
+      box-shadow: 0 0 12px var(--accent);
+    }
+    .exp-period {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 0.5rem;
+    }
+    .exp-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-bottom: 0.25rem;
+    }
+    .exp-company {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .exp-company a {
+      color: var(--accent2);
+      text-decoration: none;
+    }
+    .exp-company a:hover { text-decoration: underline; }
+    .exp-bullets {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .exp-bullets li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.92rem;
+      color: var(--muted);
+      font-weight: 300;
+      line-height: 1.7;
+    }
+    .exp-bullets li::before {
+      content: '—';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    /* PROJECTS */
+    #projects { background: var(--bg2); }
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .project-card {
+      padding: 2rem;
+      background: var(--bg2);
+      position: relative;
+      transition: background 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+    .project-card:hover { background: var(--bg3); }
+    .project-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--line2);
+      letter-spacing: 0.1em;
+      margin-bottom: 1.25rem;
+    }
+    .project-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.25rem;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+    }
+    .project-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+      flex: 1;
+    }
+    .project-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-top: 1.5rem;
+    }
+    .project-tag {
+      padding: 0.2rem 0.6rem;
+      background: rgba(212,175,55,0.06);
+      border: 1px solid rgba(212,175,55,0.15);
+      border-radius: 3px;
+      font-size: 0.72rem;
+      color: var(--accent);
+      font-family: 'DM Mono', monospace;
+    }
+    .project-link {
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.05em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .project-link:hover { text-decoration: underline; }
+
+    /* FEATURED PROJECT */
+    .project-card.featured {
+      grid-column: 1 / -1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      padding: 2.5rem;
+      align-items: start;
+    }
+    .project-card.featured .project-num { grid-column: 1; }
+    .featured-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.75rem;
+      background: rgba(123, 140, 255, 0.1);
+      border: 1px solid rgba(123, 140, 255, 0.25);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      color: var(--accent2);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--line);
+      padding: 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1100px;
+      margin: 0 auto;
+      flex-wrap: gap;
+      gap: 1rem;
+    }
+    footer p {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+    }
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up { animation: fadeUp 0.8s ease forwards; }
+    .fade-up-1 { animation-delay: 0.1s; opacity: 0; }
+    .fade-up-2 { animation-delay: 0.25s; opacity: 0; }
+    .fade-up-3 { animation-delay: 0.4s; opacity: 0; }
+    .fade-up-4 { animation-delay: 0.55s; opacity: 0; }
+
+  .cursor-glow { display: none; }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      nav ul { display: none; }
+      #hero { padding: 7rem 1.5rem 4rem; }
+      .section-inner { padding: 4rem 1.5rem; }
+      #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-stats { gap: 2rem; }
+      .project-card.featured { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAV -->
+<nav>
+
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#projects">Projects</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-tag fade-up fade-up-1">Integration & Data Engineer</div>
+  <h1 class="fade-up fade-up-2">
+    Rahmath<br><em>Shamnoona</em>
+  </h1>
+  <p class="hero-desc fade-up fade-up-3">
+    Building enterprise-grade automation and integration systems across ERP, CRM, and cloud platforms. Turning complex data flows into elegant, scalable solutions.
+  </p>
+  <div class="hero-links fade-up fade-up-4">
+    <a href="tel:+971567014033" class="btn-primary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.15 6.19a19.79 19.79 0 01-3.07-8.67A2 2 0 013.06 2h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      +971 56 701 4033
+    </a>
+    <a href="https://linkedin.com/in/shamnoona" target="_blank" class="btn-secondary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+    <a href="https://www.asrosync.com/" target="_blank" class="btn-secondary">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      AsroSync
+    </a>
+  </div>
+
+  <div class="hero-stats fade-up fade-up-4">
+    <div>
+      <div class="stat-num">2<span>+</span></div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div>
+      <div class="stat-num">10<span>+</span></div>
+      <div class="stat-label">Integrations Shipped</div>
+    </div>
+    <div>
+      <div class="stat-num">4</div>
+      <div class="stat-label">ERP/CRM Platforms</div>
+    </div>
+    <div>
+      <div class="stat-num">1</div>
+      <div class="stat-label">Platform Built</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="section-label">01 / About</div>
+    <h2>Engineer. Builder.<br><em style="font-family:'DM Serif Display',serif;font-style:normal;color:var(--accent)">Integrator.</em></h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          I'm a <strong>Senior Integration & Implementation Lead</strong> at CDX Insights, where I architect and deliver enterprise-grade automation and integration solutions. My work bridges business systems — turning disconnected platforms into seamless data pipelines.
+        </p>
+        <p>
+          From designing <strong>API-driven integrations</strong> across Autodesk, Salesforce, and Dynamics 365, to building ML forecasting models in Snowflake — I work at the intersection of data engineering and systems architecture.
+        </p>
+        <p>
+          I also serve as <strong>Technical Lead on AsroSync</strong>, a scalable integration platform that I helped architect from the ground up. I mentor developers, define architecture standards, and ensure every system we ship is reliable, observable, and built to last.
+        </p>
+      </div>
+      <div class="about-links">
+        <a href="mailto:rahmathshamnoona@gmail.com" class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">rahmathshamnoona@gmail.com</div>
+          </div>
+        </a>
+        <a href="tel:+971567014033" class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.15 6.19a19.79 19.79 0 01-3.07-8.67A2 2 0 013.06 2h3a2 2 0 012 1.72c.127.96.36 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.34 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Phone</div>
+            <div class="contact-value">+971 56 701 4033</div>
+          </div>
+        </a>
+        <a href="https://linkedin.com/in/shamnoona" target="_blank" class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">LinkedIn</div>
+            <div class="contact-value">linkedin.com/in/shamnoona</div>
+          </div>
+        </a>
+        <a href="https://www.asrosync.com/" target="_blank" class="contact-item">
+          <div class="contact-icon">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Platform</div>
+            <div class="contact-value">asrosync.com</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-inner">
+    <div class="section-label">02 / Skills</div>
+    <h2>Technical Arsenal</h2>
+    <div class="skills-grid">
+      <div class="skill-group">
+        <div class="skill-group-title">Integration Platforms</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Workato</span>
+          <span class="skill-tag">Power Automate</span>
+          <span class="skill-tag">Informatica Cloud</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">API & Protocols</div>
+        <div class="skill-tags">
+          <span class="skill-tag">REST APIs</span>
+          <span class="skill-tag">Webhooks</span>
+          <span class="skill-tag">OAuth</span>
+          <span class="skill-tag">GraphQL</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">Data & Databases</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Snowflake</span>
+          <span class="skill-tag">PostgreSQL</span>
+          <span class="skill-tag">MySQL</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">Cloud & DevOps</div>
+        <div class="skill-tags">
+          <span class="skill-tag">AWS</span>
+          <span class="skill-tag">Docker</span>
+          <span class="skill-tag">CI/CD</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">ERP & CRM</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Salesforce</span>
+          <span class="skill-tag">Dynamics 365</span>
+          <span class="skill-tag">QuickBooks</span>
+          <span class="skill-tag">Acumatica</span>
+          <span class="skill-tag">Autodesk</span>
+          <span class="skill-tag">DocuSign</span>
+        </div>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-title">AI & Analytics</div>
+        <div class="skill-tags">
+          <span class="skill-tag">Machine Learning</span>
+          <span class="skill-tag">Predictive Analytics</span>
+          <span class="skill-tag">Data Pipelines</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-inner">
+    <div class="section-label">03 / Experience</div>
+    <h2>Where I've Worked</h2>
+    <div class="exp-timeline">
+
+      <div class="exp-item">
+        <div class="exp-dot"></div>
+        <div class="exp-period">2024 — Present</div>
+        <div class="exp-title">Senior Integration & Implementation Lead</div>
+        <div class="exp-company" style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;">
+          CDX Insights
+          <span style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.2rem 0.75rem;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:20px;font-size:0.72rem;color:var(--accent);font-family:'DM Mono',monospace;letter-spacing:0.06em;">
+            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Georgia, USA
+          </span>
+        </div>
+        <ul class="exp-bullets">
+          <li>Designed and implemented production integrations across Autodesk, QuickBooks, Salesforce, and Dynamics 365, connecting enterprise systems into unified data flows</li>
+          <li>Built and maintained workflow automation using Workato and Power Automate, eliminating hours of manual data handling daily</li>
+          <li>Architected robust API-based data pipelines with error handling, retry logic, and observability baked in from day one</li>
+          <li>Led complex data migration projects with zero-downtime strategies and full audit trails</li>
+          <li>Developed ML-powered sales forecasting models leveraging Snowflake data warehousing</li>
+          <li>Mentored junior developers, established code review standards, and drove architectural best practices across the team</li>
+        </ul>
+      </div>
+
+      <div class="exp-item">
+        <div class="exp-dot" style="background: var(--accent2); box-shadow: 0 0 8px var(--accent2);"></div>
+        <div class="exp-period" style="color: var(--accent2);">Ongoing</div>
+        <div class="exp-title">Technical Lead — AsroSync</div>
+        <div class="exp-company">Integration Platform · <a href="https://www.asrosync.com/" target="_blank">asrosync.com ↗</a></div>
+        <ul class="exp-bullets">
+          <li>Led the design and development of AsroSync, a scalable integration platform built for ERP & CRM ecosystems</li>
+          <li>Defined the platform architecture: API contracts, connector framework, data transformation layer, and error pipeline</li>
+          <li>Oversaw end-to-end integrations with multiple enterprise systems, ensuring reliability and performance at scale</li>
+          <li>Ensured code quality through structured reviews, documentation standards, and developer mentorship</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="section-inner">
+    <div class="section-label">04 / Projects</div>
+    <h2>Selected Work</h2>
+    <div class="projects-grid">
+
+      <div class="project-card featured">
+        <div>
+          <div class="featured-badge">
+            <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Featured Project
+          </div>
+          <div class="project-num">01</div>
+          <div class="project-title">AsroSync Integration Platform</div>
+          <div class="project-desc">
+            A production-grade integration platform built to connect ERP and CRM systems through a unified API layer. Designed for reliability at enterprise scale with pluggable connectors, transformation pipelines, and real-time monitoring.
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">REST APIs</span>
+            <span class="project-tag">ERP/CRM</span>
+            <span class="project-tag">Workato</span>
+            <span class="project-tag">Cloud</span>
+          </div>
+          <a href="https://www.asrosync.com/" target="_blank" class="project-link">View Platform →</a>
+        </div>
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
+          <div style="padding: 1.5rem; background: rgba(212,175,55,0.03); border: 1px solid rgba(212,175,55,0.1); border-radius: 6px;">
+            <div style="font-family:'DM Mono',monospace;font-size:0.68rem;color:var(--muted);margin-bottom:0.75rem;letter-spacing:0.1em;">KEY OUTCOMES</div>
+            <div style="display:flex;flex-direction:column;gap:0.6rem;">
+              <div style="font-size:0.85rem;color:var(--text);font-weight:300;">✦ Unified connector framework for 4+ enterprise systems</div>
+              <div style="font-size:0.85rem;color:var(--text);font-weight:300;">✦ Real-time data sync with error recovery pipelines</div>
+              <div style="font-size:0.85rem;color:var(--text);font-weight:300;">✦ Developer-first documentation & onboarding</div>
+              <div style="font-size:0.85rem;color:var(--text);font-weight:300;">✦ Production-grade observability & alerting</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">02</div>
+        <div class="project-title">ERP Sales Forecasting Engine</div>
+        <div class="project-desc">
+          Built a machine learning pipeline using Snowflake to ingest ERP sales data and generate predictive forecasts. Replaced manual spreadsheet reporting with automated, confidence-scored projections.
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">Snowflake</span>
+          <span class="project-tag">ML</span>
+          <span class="project-tag">Predictive Analytics</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">03</div>
+        <div class="project-title">AWS Workflow Chatbot</div>
+        <div class="project-desc">
+          Developed an AWS-hosted chatbot that interfaces with internal business workflows — enabling teams to trigger automations, query statuses, and receive alerts through a conversational interface.
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">AWS</span>
+          <span class="project-tag">Chatbot</span>
+          <span class="project-tag">Automation</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">04</div>
+        <div class="project-title">Multi-Platform Integration Suite</div>
+        <div class="project-desc">
+          Delivered a unified integration layer connecting Autodesk (construction data), Salesforce (CRM), and Dynamics 365 (ERP) — syncing project, customer, and financial data across business units in real-time.
+        </div>
+        <div class="project-tags">
+          <span class="project-tag">Autodesk</span>
+          <span class="project-tag">Salesforce</span>
+          <span class="project-tag">Dynamics 365</span>
+          <span class="project-tag">Webhooks</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 Rahmath Shamnoona H · Built for impact</p>
+  <p>
+    <a href="https://linkedin.com/in/shamnoona" target="_blank">linkedin.com/in/shamnoona</a>
+    &nbsp;·&nbsp;
+    <a href="tel:+971567014033">+971 56 701 4033</a>
+  </p>
+</footer>
+
+<script>
+  const glow = document.getElementById('cursorGlow');
+  document.addEventListener('mousemove', e => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+  });
+</script>
+</body>
+</html>
